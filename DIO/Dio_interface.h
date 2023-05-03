@@ -32,6 +32,9 @@
 /*Direction of Pin*/
 #define DIO_u8OUTPUT			1
 #define DIO_u8INPUT				0
+/*Upper or Lower Nibble*/
+#define DIO_u8UPPER				1
+#define DIO_u8LOWER				0
 
 
 
@@ -49,5 +52,10 @@ void DIO_voidSetPortDirection(u8 Copy_u8PortId, u8 Copy_u8PinDir);
 void DIO_voidSetPortValue(u8 Copy_u8PortId,u8 Copy_u8PinsValues);
 
 u8 DIO_u8GetPortValue(u8 Copy_u8PortId);
+
+
+
+u8 DIO_u8GetNibbleValue(u8 Copy_u8PortId, u8 Copy_u8UpperOrLower);
+
 
 #endif /* DIO_INTERFACE_H_ */
