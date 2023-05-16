@@ -45,6 +45,8 @@ void DIO_voidSetPinValue(u8 Copy_u8PortId,u8 Copy_u8PinId,u8 Copy_u8PinValue);
 
 u8 DIO_u8GetPinValue(u8 Copy_u8PortId,u8 Copy_u8PinId);
 
+void DIO_u8TogglePinValue(u8 Copy_u8PortId, u8 Copy_u8PinId);
+
 /*Port Pins*/
 
 void DIO_voidSetPortDirection(u8 Copy_u8PortId, u8 Copy_u8PinDir);

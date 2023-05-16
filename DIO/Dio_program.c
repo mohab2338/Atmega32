@@ -104,6 +104,22 @@ u8 DIO_u8GetPinValue(u8 Copy_u8PortId,u8 Copy_u8PinId)
 	return Local_u8ReadPinVal;
 }
 
+
+void DIO_u8TogglePinValue(u8 Copy_u8PortId, u8 Copy_u8PinId)
+{
+	if( ( (Copy_u8PortId <= DIO_u8PORT_D)&&(Copy_u8PortId >= DIO_u8PORT_A ) ) && ( (Copy_u8PinId <= DIO_u8PIN_7)&&(Copy_u8PinId <= DIO_u8PIN_7) ) )
+	{
+
+		switch(Copy_u8PortId)
+		{
+		case DIO_u8PORT_A :		TGL_BIT(PORTA,Copy_u8PinId); break;
+		case DIO_u8PORT_B :		TGL_BIT(PORTB,Copy_u8PinId); break;
+		case DIO_u8PORT_C :		TGL_BIT(PORTC,Copy_u8PinId); break;
+		case DIO_u8PORT_D :		TGL_BIT(PORTD,Copy_u8PinId); break;
+		}
+	}
+}
+
 //--------------------------------------------------------------------------------------------
 
 u8 DIO_u8GetPortValue(u8 Copy_u8PortId)
