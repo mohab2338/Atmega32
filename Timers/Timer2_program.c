@@ -15,15 +15,17 @@
 #include "Timer2_registers.h"
 #include "Timer2_interface.h"
 #include "Timer2_config.h"
+#include "Global_Interrupt_reg.h"
+#define NULL  (void*)0
 
-
+void (*OVTimer2_PvOVTimerfn)(void) = NULL;
 void Timer2_voidInit(void)
 {
 #if(TIMER_MODE == OVERFLOW)
-	GlobalInterrupt_Enable();
+
 /*choose fast PWM*/
-	SET_BIT(TCCR2,TCCR2_WGM20);
-	SET_BIT(TCCR2,TCCR2_WGM21);
+	CLR_BIT(TCCR2,TCCR2_WGM20);
+	CLR_BIT(TCCR2,TCCR2_WGM21);
 /*enable or disable OC2*/
 	CLR_BIT(TCCR2,TCCR2_COM20);
 	CLR_BIT(TCCR2,TCCR2_COM21);
@@ -31,8 +33,10 @@ void Timer2_voidInit(void)
 	SET_BIT(TCCR2,TCCR2_CS20);
 	CLR_BIT(TCCR2,TCCR2_CS21);
 	CLR_BIT(TCCR2,TCCR2_CS22);
-/*enable async*/
-	SET_BIT(ASSR,ASSR_AS2);
+/*Disable async*/
+	CLR_BIT(ASSR,ASSR_AS2);
+	/*Enable Overflow Interrupt*/
+	SET_BIT(TIMSK, TIMSK_TOIE2);
 #elif(TIMER_MODE == PHASE_CORRECT_PWM)
 	/*choose Fast PWM mode */
 		SET_BIT(TCCR2,TCCR2_WGM20);
@@ -44,9 +48,36 @@ void Timer2_voidInit(void)
 		SET_BIT(TCCR2,TCCR2_CS20);
 		CLR_BIT(TCCR2,TCCR2_CS21);
 		CLR_BIT(TCCR2,TCCR2_CS22);
-}
 #endif
+		GlobalInterrupt_Enable();
+		//SET_BIT(SREG,SREG_I);
+}
 
+
+void Timer2_VoidOV_CallBack_fn(void (*Copy_OvTimer2Fn)(void) )
+{
+	if(Copy_OvTimer2Fn != NULL)
+	{
+		OVTimer2_PvOVTimerfn = Copy_OvTimer2Fn;
+	}
+}
+
+void __vector_5(void)
+{
+	//static u16 counter = 0;
+
+	//counter++;
+	//if(counter >= 3060)
+	//{
+		if(OVTimer2_PvOVTimerfn != NULL)
+			{
+				OVTimer2_PvOVTimerfn();
+			}
+	//	counter = 0;
+	//}
+
+
+}
 void Timer2_SetComMatchValue(u8 Copy_CompareValue)
 {
 

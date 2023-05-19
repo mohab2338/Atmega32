@@ -26,4 +26,11 @@
 #define ASSR				*((volatile u8*)0x42)
 #define ASSR_AS2						3 //1 --> clock from crystal
 
+#define TIMSK				*((volatile u8*)0x59)
+#define TIMSK_TOIE2					6
+#define TIMSK_OCIE2					7
+
+#define TIFR				*((volatile u8*)0x58)
+#define TIFR_OCF2					7
+#define TIFR_TOV2					6
 #endif /* TIMER2_REGISTERS_H_ */

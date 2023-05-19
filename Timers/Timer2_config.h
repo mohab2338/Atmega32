@@ -9,5 +9,5 @@
 #define TIMER2_CONFIG_H_
 
 
-#define TIMER_MODE			PHASE_CORRECT_PWM
+#define TIMER_MODE			OVERFLOW
 #endif /* TIMER2_CONFIG_H_ */
