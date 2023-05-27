@@ -4,8 +4,8 @@
  *  Created on: 12 Aug 2021
  *      Author: omar
  */
-#include "std_types.h"
-#include "BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
 
 #include "Dio_interface.h"

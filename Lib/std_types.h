@@ -7,7 +7,7 @@
 
 #ifndef STD_TYPES_H_
 #define STD_TYPES_H_
-
+//my std_types
 typedef unsigned char		u8;
 typedef	signed char 		s8;
 

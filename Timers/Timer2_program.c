@@ -7,15 +7,15 @@
 
 #include "util/delay.h"
 
-#include "std_types.h"
-#include "BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
-#include "Dio_interface.h"
-#include "Global_Interrupt_interface.h"
-#include "Timer2_registers.h"
-#include "Timer2_interface.h"
-#include "Timer2_config.h"
-#include "Global_Interrupt_reg.h"
+#include "E:\repos\Atmega32-16\Atmega32\DIO\Dio_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\Global_Intr\Global_Interrupt_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\Timers\Timer2_registers.h"
+#include "E:\repos\Atmega32-16\Atmega32\Timers\Timer2_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\Timers\Timer2_config.h"
+//#include "Global_Interrupt_reg.h"
 #define NULL  (void*)0
 
 void (*OVTimer2_PvOVTimerfn)(void) = NULL;

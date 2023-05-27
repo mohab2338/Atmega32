@@ -8,6 +8,6 @@
 #ifndef TIMER1_CONFIG_H_
 #define TIMER1_CONFIG_H_
 
-#define TIMER_MODE      FAST_PWM
+#define TIMER_MODE      OVERFLOW
 
 #endif /* TIMER1_CONFIG_H_ */

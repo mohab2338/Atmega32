@@ -5,16 +5,17 @@
  *      Author: MyComputer
  */
 
-#include "std_types.h"
-#include "BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
 
-#include "Dio_interface.h"
-#include "Dio_reg.h"
+#include "E:\repos\Atmega32-16\Atmega32\DIO\Dio_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\DIO\Dio_reg.h"
 
-#include "ADC_reg.h"
-#include "ADC_interface.h"
-#include "ADC_config.h"
+#include "E:\repos\Atmega32-16\Atmega32\ADC\ADC_reg.h"
+#include "E:\repos\Atmega32-16\Atmega32\ADC\ADC_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\ADC\ADC_config.h"
+
 void ADC_Init()
 {
 	DIO_voidSetPinDirection(DIO_u8PORT_A,DIO_u8PIN_0,DIO_u8INPUT);
@@ -83,8 +84,8 @@ static void Start_Conversion(void)
 }
 u16 ADC_ReadChannel(u8 Copy_Channel)
 {
-u16 Local_Data = 0;
-//*choose Channel*//
+	u16 Local_Data = 0;
+	//*choose Channel*//
 #if(CHANNEL == CHANNEL_0)
 	CLR_BIT(ADMUX, ADMUX_MUX0);
 	CLR_BIT(ADMUX, ADMUX_MUX1);
@@ -135,19 +136,19 @@ u16 Local_Data = 0;
 	CLR_BIT(ADMUX, ADMUX_MUX4);
 #endif
 	//*start conversion *//
-Start_Conversion();
+	Start_Conversion();
 
-//while(GET_BIT(ADCSRA,ADCSRA_ADIF)==0); //not sure of this step
-//SET_BIT(ADCSRA,ADCSRA_ADIF);
+	//while(GET_BIT(ADCSRA,ADCSRA_ADIF)==0); //not sure of this step
+	//SET_BIT(ADCSRA,ADCSRA_ADIF);
 
-if(ADJUST == 0)
-{
-	Local_Data = ADCL_H;
-}
-else
-{
-	Local_Data = ADCL_H>>6; // i don't know why this step this like left adjustment
-}
-return Local_Data ;
+	if(ADJUST == 0)
+	{
+		Local_Data = ADCL_H;
+	}
+	else
+	{
+		Local_Data = ADCL_H>>6; // i don't know why this step this like left adjustment
+	}
+	return Local_Data ;
 
 }

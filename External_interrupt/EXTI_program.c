@@ -5,12 +5,12 @@
  *      Author: omar
  */
 
-#include "std_types.h"
-#include "BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
-#include "Dio_interface.h"
-#include "EXTI_interface.h"
-#include "EXTI_register.h"
+#include "E:\repos\Atmega32-16\Atmega32\DIO\Dio_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\External_interrupt\EXTI_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\External_interrupt\EXTI_register.h"
 
 #define NULL (void*)0
 

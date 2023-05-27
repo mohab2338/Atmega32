@@ -7,12 +7,12 @@
 
 
 #include "util/delay.h"
-#include "std_types.h"
-#include "BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
-#include "Dio_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\DIO\Dio_interface.h"
 
-#include"LCD_config.h"
+#include "LCD_config.h"
 #include "LCD_interface.h"
 
 void LCD_voidSendCommand(u8 Copy_u8Command)

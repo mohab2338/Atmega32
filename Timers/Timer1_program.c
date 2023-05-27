@@ -8,14 +8,14 @@
 
 #include "util/delay.h"
 
-#include "std_types.h"
-#include "BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
-#include "Dio_interface.h"
-#include "Global_Interrupt_interface.h"
-#include "Timer1_reg.h"
-#include "Timer1_interface.h"
-#include "Timer1_config.h"
+#include "E:\repos\Atmega32-16\Atmega32\DIO\Dio_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\Global_Intr\Global_Interrupt_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\Timers\Timer1_reg.h"
+#include "E:\repos\Atmega32-16\Atmega32\Timers\Timer1_interface.h"
+#include "E:\repos\Atmega32-16\Atmega32\Timers\Timer1_config.h"
 
 
 #define NULL 		(void*)0
@@ -23,9 +23,10 @@
 void (*OVTimer1_pvOVtimerfunction)(void) = NULL; // this is a pointer to function
 
 void (*CTCATimer1_pvCTCtimerfunction)(void) = NULL;
+
 void Timer1_voidInit(void)
 {
-	GlobalInterrupt_Enable();
+
 #if(TIMER_MODE == OVERFLOW)
 
 	/*enable Timer overflow interrupt*/
@@ -36,8 +37,8 @@ void Timer1_voidInit(void)
 	CLR_BIT(TCCR1A,TCCR1B_WGM12);
 	CLR_BIT(TCCR1A,TCCR1B_WGM13);
 	/*prescaler*/
-	SET_BIT(TCCR1B,TCCR1B_CS10);
-	CLR_BIT(TCCR1B,TCCR1B_CS11);
+	CLR_BIT(TCCR1B,TCCR1B_CS10);
+	SET_BIT(TCCR1B,TCCR1B_CS11);
 	CLR_BIT(TCCR1B,TCCR1B_CS12);
 
 #elif(TIMER_MODE == CTC_A)
@@ -53,9 +54,9 @@ void Timer1_voidInit(void)
 	CLR_BIT(TCCR1A,TCCR1A_COM1A0);
 
 	/*prescaler*/
-	SET_BIT(TCCR1B,TCCR1B_CS10);
+	CLR_BIT(TCCR1B,TCCR1B_CS10);
 	CLR_BIT(TCCR1B,TCCR1B_CS11);
-	CLR_BIT(TCCR1B,TCCR1B_CS12);
+	SET_BIT(TCCR1B,TCCR1B_CS12);
 
 #elif(TIMER_MODE == FAST_PWM)
 	/**choose FAST_PWM TOP OCR1A Mode*/
@@ -77,7 +78,7 @@ void Timer1_voidInit(void)
 
 
 #endif
-
+	GlobalInterrupt_Enable();
 }
 
 u8 Timer1OV_u8OVtimerCallback(void (*Copy_pvOVTimer1Function)(void))
@@ -97,16 +98,17 @@ u8 Timer1OV_u8OVtimerCallback(void (*Copy_pvOVTimer1Function)(void))
 
 void __vector_9(void)
 {
-	static f32 counter = 0;
-	counter++;
-	//if(counter == 3906) // this is a condition for one sec overflow
-	//if(counter >= 15.258)
+	//static f32 counter = 0;
+	//counter++;
+	//if(counter >= 3906) // this is a condition for one sec overflow
+	//if(counter >= 16)
 	//{
 		if( OVTimer1_pvOVtimerfunction != NULL)
 		{
 			OVTimer1_pvOVtimerfunction();
 		}
-		counter = 0;
+		//counter = 0;
+	//	CLR_BIT(TIFR, TIFR_TOV1);
 	//}
 }
 
@@ -126,16 +128,16 @@ u8 Timer1CTCA_u8CTCtimerCallback(void (*Copy_CTCTimer1Function)(void))
 }
 void __vector_7(void)
 {
-	static f32 counter = 0;
-	counter++;
-	if(counter >= 468.75)
-	{
-		if( OVTimer1_pvOVtimerfunction != NULL)
+	//static f32 counter = 0;
+	//counter++;
+	//if(counter >= 468.75)
+	//{
+		if( CTCATimer1_pvCTCtimerfunction != NULL)
 		{
-			OVTimer1_pvOVtimerfunction();
+			CTCATimer1_pvCTCtimerfunction();
 		}
-		counter = 0;
-	}
+	//	counter = 0;
+	//}
 }
 void Timer1_SetCompareMatchA_Value(u16 Copy_CompareValue)
 {
@@ -146,7 +148,10 @@ void Timer1_SetTimer1value(u16 Copy_TimerValue)
 {
 	TCNT1L_H = Copy_TimerValue;
 }
-
+u16 Timer1_GetTimer1Value(void)
+{
+	return TCNT1L_H;
+}
 void Timer1PWM_A_OC1A(u8 Copy_BitValue)
 {
 	if(Copy_BitValue == 1)

@@ -5,9 +5,9 @@
  *      Author: omar
  */
 
-#include "std_types.h"
-#include "BIT_MATH.h"
-#include "Global_Interrupt_reg.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
+#include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
+#include "E:\repos\Atmega32-16\Atmega32\Global_Intr\Global_Interrupt_reg.h"
 
 
 void GlobalInterrupt_Enable(void)
