@@ -17,18 +17,20 @@
 #define SCK		    DIO_u8PIN_7
 #define SS			DIO_u8PIN_4
 
+#define NULL   (void*)0
+void  (*SPI_FunctionPointer)(void) = NULL;
 
-void SPI_Init(u8 Master_Or_Slave, u8 CLK_Rate )
+void SPI_Init(u8 Master_Or_Slave, u8 CLK_Rate, u8 Enable_Interrupt )
 {
 	/********* Choose Master or Slave ********/
-	if( Master_Or_Slave == 1 )
+	if( Master_Or_Slave == SPI_Master )
 	{
 		SET_BIT(SPCR, SPCR_MSTR);
 		DIO_voidSetPinDirection(SPI_PORT, MOSI, DIO_u8OUTPUT);
 		DIO_voidSetPinDirection(SPI_PORT, SCK , DIO_u8OUTPUT);
 		DIO_voidSetPinDirection(SPI_PORT, MISO, DIO_u8INPUT );
 	}
-	else if( Master_Or_Slave == 0)
+	else if( Master_Or_Slave == SPI_Slave)
 	{
 		CLR_BIT(SPCR, SPCR_MSTR);
 		DIO_voidSetPinDirection(SPI_PORT, MOSI, DIO_u8INPUT  );
@@ -38,32 +40,34 @@ void SPI_Init(u8 Master_Or_Slave, u8 CLK_Rate )
 		DIO_voidSetPinDirection(SPI_PORT, SS, DIO_u8INPUT );
 	}
 	/********* Choose Frequency ********/
-	if( CLK_Rate == FOS_4 )
+	if( CLK_Rate == SPI_FOS_4 )
 	{
 		CLR_BIT(SPCR, SPCR_SPR0);
 		CLR_BIT(SPCR, SPCR_SPR1);
 		CLR_BIT(SPSR, SPSR_SPI2X);
 	}
-	else if( CLK_Rate == FOS_64)
+	else if( CLK_Rate == SPI_FOS_64)
 	{
 		CLR_BIT(SPCR, SPCR_SPR0);
 		SET_BIT(SPCR, SPCR_SPR1);
 		CLR_BIT(SPSR, SPSR_SPI2X);
 
 	}
-	//SET_BIT(SPCR, SPCR_SPR0);
 
 	/*Enable interrupt */
-	GlobalInterrupt_Enable();
-	SET_BIT(SPCR, SPCR_SPIE);
+	if(Enable_Interrupt == SPI_Inerrupt_Enabled)
+	{
+		GlobalInterrupt_Enable();
+		SET_BIT(SPCR, SPCR_SPIE);
+	}
 	/********* SPI Enable  ********/
 	SET_BIT(SPCR, SPCR_SPE);
 }
 
-#define NULL   (void*)0
-void  (*SPI_FunctionPointer)(void) = NULL;
 
-/*u8 SPI_CallBack_Fn( void (* Handler_Fn)(void) ){
+
+u8 SPI_CallBack_Fn( void (* Handler_Fn)(void) )
+{
 
 	if( Handler_Fn != NULL){
 		SPI_FunctionPointer = Handler_Fn;
@@ -74,7 +78,8 @@ void  (*SPI_FunctionPointer)(void) = NULL;
 	return -1;
 }
 
-void __vector_12(void){
+void __vector_12(void)
+{
 
 	if( SPI_FunctionPointer != NULL){
 
@@ -83,7 +88,7 @@ void __vector_12(void){
 	}
 
 
-}*/
+}
 u8 SPI_Send(u8 Data)
 {
 	/********* SPI Enable  ********/
@@ -108,5 +113,9 @@ void SPI_Send_String(char *Data)
 u8 SPI_Receive()
 {
 	while( GET_BIT(SPSR, SPSR_SPIF) == 0);
+	return SPDR;
+}
+u8 SPI_GetReceivedData()
+{
 	return SPDR;
 }

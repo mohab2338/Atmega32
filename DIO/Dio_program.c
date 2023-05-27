@@ -271,4 +271,16 @@ void DIO_voidSetPortValue(u8 Copy_u8PortId,u8 Copy_u8PinsValues)
 
 	}
 }
+void DIO_voidSetUpperNibbleValue(u8 Copy_u8PortId,u8 Copy_u8PinsValues)
+{
 
+	switch(Copy_u8PortId)
+	{
+	case  DIO_u8PORT_A : PORTA = (Copy_u8PinsValues<<4) ; break;
+	case  DIO_u8PORT_B : PORTB = (Copy_u8PinsValues<<4) ; break;
+	case  DIO_u8PORT_C : PORTC = (Copy_u8PinsValues<<4) ; break;
+	case  DIO_u8PORT_D : PORTD = (Copy_u8PinsValues<<4) ; break;
+
+
+	}
+}

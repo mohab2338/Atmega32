@@ -47,6 +47,6 @@
 
 
 
-#define UDR			(*((volatile u8*)0x2C))
+#define UDR			(*((volatile u16*)0x2C))
 
 #endif /* UART_REG_H_ */

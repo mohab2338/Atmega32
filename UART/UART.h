@@ -11,6 +11,9 @@
 #include "std_types.h"
 
 /*configurations Macros*/
+#define OK  0
+#define NOK  1
+
 #define SLAVE_ADDRESS				0
 #define MULTIPROCESS_COMM_MODE     Disable
 
@@ -40,11 +43,31 @@ enum Parity_Mode {  DISABLED    = 0,
 enum Multiprocessor_Comm_Mode { Disable = 0,
 							    Enable  = 1};
 
+enum RX_TX_Interrupt { Disable_TX = 0 ,
+					   Enable_TX  = 1,
+					   Disable_RX = 0 ,
+					   Enable_RX  = 1,
+					   Enable_Empty_interrupt = 1,
+					   Disable_Empty_interrupt = 0};
 
-void UART_Send_character( u16 Data);
+/*RX complete*/
+void __vector_13(void)__attribute__((signal));
+/*Data register Empty*/
+void __vector_14(void)__attribute__((signal));
+/*TX complete*/
+void __vector_15(void)__attribute__((signal));
+
+
+void UART_Send_character( u8 Data);
 void UART_Send_String(char *Data);
 u8 UART_Receive();
+u8 UART_GetReceivedData(void);
 u8 UART_SlaveAddressRecive(void);
 void UART_Init(u32 Baud, u8 numberOfBits, u8 numberOfStopBits, u8 ParityCheck);
+
+void UART_InterruptEnable(u8 TX, u8 RX , u8 Empty_intr);
+
+u8 UART_u8RxCompleteSetCallback(void (*Copy_pvINTFunction)(void));
+u8 UART_u8TxCompleteSetCallback(void (*Copy_pvINTFunction)(void));
 
 #endif /* UART_UART_H_ */

@@ -52,6 +52,7 @@ void DIO_u8TogglePinValue(u8 Copy_u8PortId, u8 Copy_u8PinId);
 void DIO_voidSetPortDirection(u8 Copy_u8PortId, u8 Copy_u8PinDir);
 
 void DIO_voidSetPortValue(u8 Copy_u8PortId,u8 Copy_u8PinsValues);
+void DIO_voidSetUpperNibbleValue(u8 Copy_u8PortId,u8 Copy_u8PinsValues);
 
 u8 DIO_u8GetPortValue(u8 Copy_u8PortId);
 

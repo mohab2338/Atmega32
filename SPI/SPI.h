@@ -30,22 +30,27 @@
 #define	SPDR				(*(volatile u8*)0x2F)
 
 
-enum Master_Or_Slave{ Slave = 0,
-					  Master = 1};
+enum Master_Or_Slave{ SPI_Slave = 0,
+					  SPI_Master = 1};
 
-enum SCK_Frequency{ FOS_4  = 0,
-					FOS_64 = 1};
+enum SCK_Frequency{ SPI_FOS_4  = 0,
+					SPI_FOS_64 = 1};
 
+enum SPI_Interrupt{ SPI_Inerrupt_Enabled = 0,
+					SPI_Inerrupt_Disabled =1
+					};
 
+void __vector_12(void)__attribute__((signal));
 
-void SPI_Init(u8 Master_Or_Slave, u8 CLK_Rate );
+void SPI_Init(u8 Master_Or_Slave, u8 CLK_Rate, u8 Enable_Interrupt );
 u8 SPI_Send(u8 Data);
 void SPI_Send_String(char *Data);
 
 u8 SPI_Receive();
+u8 SPI_GetReceivedData();
 
-//void __vector_12(void);
-//u8 SPI_CallBack_Fn( void (* Handler_Fn)(void) );
+
+u8 SPI_CallBack_Fn( void (* Handler_Fn)(void) );
 
 
 

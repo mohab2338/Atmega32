@@ -6,10 +6,14 @@
  */
 
 #define F_CPU 8000000UL
+#include "util/delay.h"
+
 #include "BIT_MATH.h"
 #include "UART.h"
 #include "UART_reg.h"
 #include <math.h>
+#include "Global_Interrupt_interface.h"
+#include "Dio_interface.h"
 
 /* Set baud rate */
 //UBRRH = (unsigned char)(baud>>8);
@@ -21,8 +25,16 @@
 #define NULL  ((void *)0)
 #define BAUD_ASYNCH_NORMAL(baud)	(((float)F_CPU/(float)(16*baud)) - 1)
 
+
+
+void (*UART_pvRxFunction)(void) = NULL;
+void (*UART_pvTxFunction)(void) = NULL;
+
+
 void UART_Init(u32 Baud, u8 numberOfBits, u8 numberOfStopBits, u8 ParityCheck)
 {
+	DIO_voidSetPinDirection(DIO_u8PORT_D, DIO_u8PIN_0, DIO_u8INPUT);
+		DIO_voidSetPinDirection(DIO_u8PORT_D, DIO_u8PIN_1, DIO_u8OUTPUT);
 	/* Set baud rate */
 	/*Note: The baud rate config can't handle some baud rates due to not using  UBRRH  */
 	//UBRRH = (9600 >>8); // i don't understand why this format check it!
@@ -101,7 +113,7 @@ void UART_Init(u32 Baud, u8 numberOfBits, u8 numberOfStopBits, u8 ParityCheck)
 
 }
 
-void UART_Send_character(u16 Data)
+void UART_Send_character(u8 Data)
 {
 	while( GET_BIT(UCSRA, UCSRA_UDRE) == 0);
 	//CLR_BIT(UCSRB, UCSRB_TXB8); // Clear it 9nth Bit before checking for 9nth data bit
@@ -124,6 +136,7 @@ void UART_Send_String(char *Data)
 {
 	while( *Data != '\0'){
 		UART_Send_character(*Data);
+		//_delay_ms(5);
 		Data++;
 	}
 
@@ -171,5 +184,81 @@ u8 UART_SlaveAddressRecive(void)
 	}
  return 0;
 
+}
+u8 UART_GetReceivedData(void)
+{
+	return UDR;
+}
+
+void UART_InterruptEnable(u8 TX, u8 RX , u8 Empty_intr)
+{
+	GlobalInterrupt_Enable();
+	if( TX == Enable_TX )
+	{
+		SET_BIT(UCSRB, UCSRB_TXCIE);
+	}
+	else
+	{
+		CLR_BIT(UCSRB, UCSRB_TXCIE);
+	}
+    if(RX == Enable_RX)
+	{
+		SET_BIT(UCSRB, UCSRB_RXCIE);
+	}
+    else
+    {
+		CLR_BIT(UCSRB, UCSRB_RXCIE);
+    }
+    if( Empty_intr == Enable_Empty_interrupt)
+    {
+    	SET_BIT(UCSRB, UCSRB_UDRIE);
+    }
+    else
+    {
+    	CLR_BIT(UCSRB, UCSRB_UDRIE);
+    }
+
+}
+u8 UART_u8RxCompleteSetCallback(void (*Copy_pvINTFunction)(void))
+{
+	u8 Local_u8ReturnStatus = OK;
+		if(Copy_pvINTFunction != NULL)
+		{
+			UART_pvRxFunction = Copy_pvINTFunction;
+		}
+		else
+		{
+			Local_u8ReturnStatus = NOK;
+		}
+		return Local_u8ReturnStatus;
+}
+
+void __vector_13(void)
+{
+	if( UART_pvRxFunction != NULL)
+		{
+			UART_pvRxFunction();
+		}
+}
+u8 UART_u8TxCompleteSetCallback(void (*Copy_pvINTFunction)(void))
+{
+	u8 Local_u8ReturnStatus = OK;
+		if(Copy_pvINTFunction != NULL)
+		{
+			UART_pvTxFunction = Copy_pvINTFunction;
+		}
+		else
+		{
+			Local_u8ReturnStatus = NOK;
+		}
+		return Local_u8ReturnStatus;
+}
+
+void __vector_15(void)
+{
+	if( UART_pvTxFunction != NULL)
+		{
+			UART_pvTxFunction();
+		}
 }
 
