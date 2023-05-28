@@ -9,6 +9,7 @@
 #define LCD_INTERFACE_H_
 
 
+
 void LCD_voidSendCommand(u8 Copy_u8Command);
 void LCD_voidSendData(u8 Copy_u8Data);
 void LCD_voidInit(void);
@@ -24,4 +25,12 @@ void LCD_voidwriteSpecialCharacter(u8 Copy_pu8Pattern[], u8 Copy_u8PatternNumber
 
 /*Clear screen*/
 void LCD_voidClearScreen();
+
+
+/*Display long integers*/
+void LCD_VoidDisplayInteger(u32 Displayed_Value);
+
+/*Display Float Numbers*/
+void LCD_VoidDisplayFloat(f32 Displayed_Value);
+
 #endif /* LCD_INTERFACE_H_ */

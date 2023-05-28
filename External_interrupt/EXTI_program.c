@@ -27,7 +27,7 @@ u8 EXTI0_voidInit(u8 Copy_u8SenseLevel)
 	DIO_voidSetPinDirection(EXTI_INT_PORT, EXTI_INT0_PIN, DIO_u8INPUT);
 
 	/*2-Enable Pull up Resistor*/
-	DIO_voidSetPinValue(EXTI_INT_PORT, EXTI_INT0_PIN, DIO_u8HIGH);
+	//DIO_voidSetPinValue(EXTI_INT_PORT, EXTI_INT0_PIN, DIO_u8HIGH);
 
 	/*3-Enable PIE of INT0*/
 	SET_BIT(GICR,GICR_INT0);

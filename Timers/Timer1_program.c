@@ -24,6 +24,8 @@ void (*OVTimer1_pvOVtimerfunction)(void) = NULL; // this is a pointer to functio
 
 void (*CTCATimer1_pvCTCtimerfunction)(void) = NULL;
 
+void (*ICP_Timer1_pvICPtimerfunction)(void) = NULL;
+
 void Timer1_voidInit(void)
 {
 
@@ -43,20 +45,21 @@ void Timer1_voidInit(void)
 
 #elif(TIMER_MODE == CTC_A)
 	/*enable Timer CTC compare match A interrupt*/
-	SET_BIT(TIMSK,TIMSK_OCIE1A);
+	//SET_BIT(TIMSK,TIMSK_OCIE1A);
+	SET_BIT(TIMSK,TIMSK_OCIE1A); // default disabled
+
 	/**choose OverFlow Mode*/
 	CLR_BIT(TCCR1A,TCCR1A_WGM10);
 	CLR_BIT(TCCR1A,TCCR1A_WGM11);
 	SET_BIT(TCCR1A,TCCR1B_WGM12);
 	CLR_BIT(TCCR1A,TCCR1B_WGM13);
 	/*OC1A activation*/
-	SET_BIT(TCCR1A,TCCR1A_COM1A0);
 	CLR_BIT(TCCR1A,TCCR1A_COM1A0);
-
+	SET_BIT(TCCR1A,TCCR1A_COM1A0);
 	/*prescaler*/
 	CLR_BIT(TCCR1B,TCCR1B_CS10);
-	CLR_BIT(TCCR1B,TCCR1B_CS11);
-	SET_BIT(TCCR1B,TCCR1B_CS12);
+	SET_BIT(TCCR1B,TCCR1B_CS11);
+	CLR_BIT(TCCR1B,TCCR1B_CS12);
 
 #elif(TIMER_MODE == FAST_PWM)
 	/**choose FAST_PWM TOP OCR1A Mode*/
@@ -69,18 +72,17 @@ void Timer1_voidInit(void)
 	/*enable Timer overflow interrupt*/
 	//SET_BIT(TIMSK,TIMSK_TOIE1);
 	/*OC1A activation*/
-	CLR_BIT(TCCR1A,TCCR1A_COM1A0);
+	SET_BIT(TCCR1A,TCCR1A_COM1A0);
 	CLR_BIT(TCCR1A,TCCR1A_COM1A1);
 	/*prescaler*/
-	SET_BIT(TCCR1B,TCCR1B_CS10);
-	CLR_BIT(TCCR1B,TCCR1B_CS11);
+	CLR_BIT(TCCR1B,TCCR1B_CS10);
+	SET_BIT(TCCR1B,TCCR1B_CS11);
 	CLR_BIT(TCCR1B,TCCR1B_CS12);
 
 
 #endif
 	GlobalInterrupt_Enable();
 }
-
 u8 Timer1OV_u8OVtimerCallback(void (*Copy_pvOVTimer1Function)(void))
 {
 	u8 Local_u8ReturnStatus = OK;
@@ -164,4 +166,77 @@ void Timer1PWM_A_OC1A(u8 Copy_BitValue)
 		CLR_BIT(TCCR1A,TCCR1A_COM1A0);
 		CLR_BIT(TCCR1A,TCCR1A_COM1A1);
 	}
+}
+
+void Timer1CTC_A_OC1A(u8 Copy_PinState)
+{
+	if(Copy_PinState == 1)
+	{
+		/*OC1A Enabled*/
+		SET_BIT(TCCR1A,TCCR1A_COM1A0);
+		CLR_BIT(TCCR1A,TCCR1A_COM1A0);
+	}
+	else
+	{
+		/*OC1A disabled*/
+		CLR_BIT(TCCR1A,TCCR1A_COM1A0);
+		CLR_BIT(TCCR1A,TCCR1A_COM1A0);
+	}
+}
+void Timer1CTC_A_Enable_Disable(u8 Copy_u8State)
+{
+	if(Copy_u8State == 1)
+	{
+		SET_BIT(TIMSK,TIMSK_OCIE1A);
+
+	}
+	else if(Copy_u8State == 0)
+	{
+		CLR_BIT(TIMSK,TIMSK_OCIE1A);
+
+	}
+}
+
+void Timer1_ICP1_INT_Enable(u8 Copy_u8SenseLevel)
+{
+
+	if(Copy_u8SenseLevel == RisingEdge)
+	{
+		SET_BIT(TCCR1B, TCCR1B_ICES1);
+	}
+	else if(Copy_u8SenseLevel == FallingEdge)
+	{
+		CLR_BIT(TCCR1B, TCCR1B_ICES1);
+	}
+	/*Enable Input Capture unit*/
+	SET_BIT(TIMSK, TIMSK_TICIE1);
+
+}
+void __vector_6(void)
+{
+
+	if( ICP_Timer1_pvICPtimerfunction != NULL)
+	{
+		ICP_Timer1_pvICPtimerfunction();
+	}
+}
+
+u8 Timer1ICP_u8ICPtimerCallback(void (*Copy_ICPTimer1Function)(void))
+{
+	u8 Local_u8ReturnStatus = OK;
+
+	if(Copy_ICPTimer1Function != NULL)
+	{
+		ICP_Timer1_pvICPtimerfunction = Copy_ICPTimer1Function;
+	}
+	else
+	{
+		Local_u8ReturnStatus = NOK;
+	}
+	return Local_u8ReturnStatus;
+}
+
+u16 Timer1_u16GetICPValue()
+{
+	return ICR1L_H;
 }

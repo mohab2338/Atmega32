@@ -8,6 +8,8 @@
 #ifndef LCD_CONFIG_H_
 #define LCD_CONFIG_H_
 
+#define REESOLUTION  						  11
+#define DISPLAYED_FlOAT_RESOLUTION			2
 
 #define LCD_DATA_PORT    DIO_u8PORT_B
 #define LCD_CTRL_PORT    DIO_u8PORT_C

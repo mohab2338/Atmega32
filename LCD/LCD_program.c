@@ -7,6 +7,7 @@
 
 
 #include "util/delay.h"
+#include <math.h>
 #include "E:\repos\Atmega32-16\Atmega32\Lib\std_types.h"
 #include "E:\repos\Atmega32-16\Atmega32\Lib\BIT_MATH.h"
 
@@ -14,6 +15,8 @@
 
 #include "LCD_config.h"
 #include "LCD_interface.h"
+
+u16 Display_Array[REESOLUTION];
 
 void LCD_voidSendCommand(u8 Copy_u8Command)
 {
@@ -128,4 +131,41 @@ void LCD_voidClearScreen()
 {
 	/*Clear command*/
 	LCD_voidSendCommand(1);
+}
+
+void LCD_VoidDisplayInteger(u32 Displayed_Value){
+	u8 Local_resolution = 0;
+	u32 temp = Displayed_Value;
+	while(temp != 0 )
+	{
+		if( (temp = temp/10)==0)  break;
+		Local_resolution++;
+	}
+
+	temp = Local_resolution;
+	Local_resolution = 0;
+
+	while(Local_resolution <= temp )
+	{
+		Display_Array[temp - Local_resolution] = (  Displayed_Value - ( (Displayed_Value/10 )*10 )  );
+		Displayed_Value = (Displayed_Value/10 );
+		Local_resolution++;
+	}
+
+	Local_resolution = 0;
+
+	for(u8 i = 0; i <= temp ;i++)
+	{
+		LCD_voidSendData(Display_Array[i] + '0');
+	}
+}
+
+void LCD_VoidDisplayFloat(f32 Displayed_Value)
+{
+	static u32 Temp_variable = 0;
+
+	LCD_VoidDisplayInteger(Displayed_Value);
+	LCD_voidSendData('.');
+	Temp_variable = round( ( ( Displayed_Value - (u32)(Displayed_Value) ) *pow(10,DISPLAYED_FlOAT_RESOLUTION)));
+	LCD_VoidDisplayInteger(Temp_variable);
 }
